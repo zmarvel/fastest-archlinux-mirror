@@ -4,6 +4,9 @@ import subprocess
 import re
 from dataclasses import dataclass
 from multiprocessing import Pool
+import csv
+from pprint import pprint
+
 
 parser = ArgumentParser()
 
@@ -95,8 +98,22 @@ with Pool(32) as pool:
         ping_stats.append(stats)
 
 
-from pprint import pprint
 pprint(ping_stats)
+
+# Write output to csv
+
+with open('ping_stats.csv', 'w+') as f:
+    writer = csv.writer(f)
+    # write header row
+    # host: str
+    # min: float
+    # avg: float
+    # max: float
+    # mdev: float
+    writer.writerow(('host', 'min', 'avg', 'max', 'mdev'))
+    writer.writerows((r.host, r.min, r.avg, r.max, r.mdev) for r in ping_stats)
+
+print('Wrote output to ping_stats.csv')
 
 end_time = time.time()
 
